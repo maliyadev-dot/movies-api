@@ -166,5 +166,26 @@ movies = [
         "director": "Kevin Costner",
         "year": 2024,
         "watched": True,
-    }
+    },
+    {
+        "id": 25,
+        "title": "Back to the Future",
+        "director": "Robert Zemeckis",
+        "year": 1985,
+        "watched": True,
+    },
+    {
+        "id": 26,
+        "title": "Back to the Future Part II",
+        "director": "Robert Zemeckis",
+        "year": 1989,
+        "watched": True,
+    },
+    {
+        "id": 27,
+        "title": "Back to the Future Part III",
+        "director": "Robert Zemeckis",
+        "year": 1990,
+        "watched": True,
+    },
 ]
