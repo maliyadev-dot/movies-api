@@ -25,6 +25,14 @@ def get_movie(movie_id):
         if movie["id"] == movie_id:
             return jsonify(movie), 200
 
+@app.route("/test-body", methods=["POST"])
+def test_body():
+    data = request.get_json()
+    return {
+        "parsed": data,
+        "title_field": data["title"] if data else None
+    }
+
     # if we got here, no movie matched
     return jsonify({
             "error": "Not found",
