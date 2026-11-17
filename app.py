@@ -42,10 +42,10 @@ def test_body():
 @app.route("/movies", methods=["POST"])
 def create_movie():
     movie_data = request.get_json()
-
-    response_body = {
-        "message": "Movie created successfully",
-        "received": movie_data
+    new_movie = {
+        **movie_data,
+        "id": max(movie["id"] for movie in movies) + 1
     }
+    movies.append(new_movie)
 
-    return jsonify(response_body), 201
+    return jsonify(new_movie), 201
