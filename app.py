@@ -42,6 +42,55 @@ def test_body():
 @app.route("/movies", methods=["POST"])
 def create_movie():
     movie_data = request.get_json()
+
+    # 1) Presence validation (keys must exist)
+    required_fields = ["title", "director", "year", "watched"]
+    for field in required_fields:
+        if field not in movie_data:
+            return jsonify({
+                "error": "validation_error",
+                "message": f"Field '{field}' is required."
+            }), 400
+
+    # 2) Type validation
+    if not isinstance(movie_data["title"], str):
+        return jsonify({
+            "error": "validation_error",
+            "message": "Field 'title' must be a string."
+        }), 400
+
+    if not isinstance(movie_data["director"], str):
+        return jsonify({
+            "error": "validation_error",
+            "message": "Field 'director' must be a string."
+        }), 400
+
+    if not isinstance(movie_data["year"], int):
+        return jsonify({
+            "error": "validation_error",
+            "message": "Field 'year' must be an integer."
+        }), 400
+
+    if not isinstance(movie_data["watched"], bool):
+        return jsonify({
+            "error": "validation_error",
+            "message": "Field 'watched' must be a boolean."
+        }), 400
+
+    # 3) Extra: non-empty checks for strings
+    if movie_data["title"].strip() == "":
+        return jsonify({
+            "error": "validation_error",
+            "message": "Field 'title' cannot be empty."
+        }), 400
+
+    if movie_data["director"].strip() == "":
+        return jsonify({
+            "error": "validation_error",
+            "message": "Field 'director' cannot be empty."
+        }), 400
+
+    # 4) If everything is valid, create and store the movie
     new_movie = {
         **movie_data,
         "id": max(movie["id"] for movie in movies) + 1
