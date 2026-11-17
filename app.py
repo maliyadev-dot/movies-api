@@ -38,3 +38,14 @@ def test_body():
             "error": "Not found",
             "message": f"No movie with id {movie_id} was found."
         }), 404
+
+@app.route("/movies", methods=["POST"])
+def create_movie():
+    movie_data = request.get_json()
+
+    response_body = {
+        "message": "Movie created successfully",
+        "received": movie_data
+    }
+
+    return jsonify(response_body), 201
