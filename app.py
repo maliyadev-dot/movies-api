@@ -171,3 +171,17 @@ def update_movie(movie_id):
 
     # 6) Return 200 w/ updated movie
     return jsonify(movie), 200
+
+@app.route("/movies/<int:movie_id>", methods=["DELETE"])
+def delete_movie(movie_id):
+    # 1) Find the movie by ID
+    for index, movie in enumerate(movies):
+        if movie["id"] == movie_id:
+            movies.pop(index)
+            return "", 204
+
+    # 2) If no movie matched, return the same 404 JSON shape
+    return jsonify({
+        "error": "Not found",
+        "message": f"No movie with id {movie_id} was found."
+    }), 404

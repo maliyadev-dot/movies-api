@@ -29,6 +29,7 @@
   .badge.seen{color:var(--ok);border-color:var(--ok)}
   .card .row{display:flex;gap:8px}
   .card .row button{flex:1;background:transparent;color:var(--muted);border:1px solid var(--line);padding:6px}
+  .card .row button.del{color:var(--bad)}
 </style>
 </head>
 <body>
@@ -58,7 +59,7 @@
       headers: body ? {"Content-Type": "application/json"} : {},
       body: body ? JSON.stringify(body) : undefined
     });
-    const data = await res.json().catch(() => null);
+    const data = await res.json().catch(() => null);   // 204 has no body
     show(method, path, res.status, res.ok);
     return { status: res.status, data };
   }
@@ -67,13 +68,21 @@
     <h3>${esc(m.title)}</h3>
     <div class="meta">${esc(m.director)} · ${m.year}</div>
     <span class="badge ${m.watched ? "seen" : ""}">${m.watched ? "watched" : "unwatched"}</span>
-    <div class="row"><button onclick="startEdit(${m.id})">Edit</button></div>
+    <div class="row">
+      <button onclick="startEdit(${m.id})">Edit</button>
+      <button class="del" onclick="del(${m.id})">Delete</button>
+    </div>
   </div>`;
 
   async function load() {
     const { data } = await api("GET", "/movies");
     MOVIES = data || [];
     $("#list").innerHTML = MOVIES.length ? MOVIES.map(card).join("") : '<p class="meta">No movies yet.</p>';
+  }
+
+  async function del(id) {
+    const { status } = await api("DELETE", `/movies/${id}`);
+    if (status === 204 || status === 200) { if (editing === id) resetForm(); load(); }
   }
 
   function startEdit(id) {
