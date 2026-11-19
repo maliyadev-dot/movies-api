@@ -1,30 +1,59 @@
-# Movies API Backend
+# Movies API
 
-Backend API for a movie library project built while learning RESTful API development.
+A small Flask REST API and browser-based movie library for practicing CRUD operations.
 
-## Overview
+## Requirements
 
-This project will grow into a backend service that:
+- Python 3.10 or later
+- Dependencies from `requirements.txt`
 
-- Receives requests from a movie web app (frontend)
-- Processes those requests using application rules
-- Returns structures data about movies (for example: titles, years, and ratings)
+## Setup and run
 
-The frontend will call this API and display the resukts to users.
+Create and activate a virtual environment, then install the dependencies:
 
-## Tech Stack
+```powershell
+py -m venv venv
+.\venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+```
 
-- Language: Python
-- Framework: Flask (planned)
-- Style: REST-style API design
+Start the development server from the project directory:
 
-## Status
+```powershell
+flask --app app run --debug
+```
 
-- ✅ Repository initialized
-- ✅ Project structure & virtual environment setup
-- 🔄 Backend endpoints in progress
+Open <http://127.0.0.1:5000/> for the movie library. The API stores data in memory, so changes reset when the server restarts.
 
-## Goals
+## API
 
-- Practice backend development and HTTP request/response flow
--Build a portfolio-ready project that demonstrates server-side skills
+All movie objects have an `id`, `title`, `director`, `year`, and `watched` field.
+
+| Method | Endpoint | Description |
+| --- | --- | --- |
+| `GET` | `/movies` | List movies; optionally filter with `?director=Name` |
+| `GET` | `/movies/<id>` | Get one movie |
+| `POST` | `/movies` | Create a movie |
+| `PUT` | `/movies/<id>` | Replace a movie |
+| `DELETE` | `/movies/<id>` | Delete a movie |
+
+Create and update requests require a JSON object with a non-empty string `title`, a non-empty string `director`, an integer `year`, and a boolean `watched`. Invalid input returns `400`; requests for unknown movie IDs return `404`.
+
+Example request body:
+
+```json
+{
+  "title": "Arrival",
+  "director": "Denis Villeneuve",
+  "year": 2016,
+  "watched": false
+}
+```
+
+## Tests
+
+Run the API tests with:
+
+```powershell
+python -m unittest discover -v
+```
