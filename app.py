@@ -1,8 +1,9 @@
 from flask import Flask, jsonify, send_from_directory, request
 from movies_data import movies
+from flasgger import Swagger
 
 app = Flask(__name__)
-
+swagger = Swagger(app)
 
 def validate_movie_data(movie_data):
     if not isinstance(movie_data, dict):
@@ -47,6 +48,19 @@ def home():
 
 @app.route("/movies")
 def list_movies():
+    """
+    List all movies, optionally filtered by director.
+    ---
+    parameters:
+      - name: director
+        in: query
+        type: string
+        required: false
+        description: Filter movies by director name
+    responses:
+      200:
+        description: A JSON array of movies.
+    """
     director = request.args.get("director")
 
     if director:
