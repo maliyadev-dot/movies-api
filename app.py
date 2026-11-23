@@ -155,6 +155,38 @@ def delete_movie(movie_id):
 
 @app.route("/movies/<int:movie_id>/reviews", methods=["POST"])
 def add_review(movie_id):
+    """
+    Create a new review for a movie.
+    ---
+    parameters:
+      - name: movie_id
+        in: path
+        required: true
+        type: integer
+      - name: body
+        in: body
+        required: true
+        schema:
+          type: object
+          properties:
+            reviewer:
+              type: string
+            rating:
+              type: integer
+            comment:
+              type: string
+          required:
+            - reviewer
+            - rating
+            - comment
+    responses:
+      201:
+        description: Review created
+      400:
+        description: Invalid request body
+      404:
+        description: Movie not found
+    """
     movie = None
     for m in movies:
         if m["id"] == movie_id:
@@ -162,10 +194,7 @@ def add_review(movie_id):
             break
 
     if movie is None:
-        return jsonify({
-            "error": "not_found",
-            "message": f"No movie with id {movie_id} was found."
-        }), 404
+        return not_found_error(f"No movie with id {movie_id} was found.")
 
     review_data = request.get_json(silent=True)
     if not isinstance(review_data, dict):
