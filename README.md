@@ -134,8 +134,8 @@ I wanted responses to be predictable, so every endpoint sticks to the same conve
 # Running it locally
 
 1. Clone the repo
-git clone https://github.com/<your-username>/<your-repo-name>.git
-cd <your-repo-name>
+git clone https://github.com/maliyadev-dot/movies-api.git
+cd movies-api
 
 2. Create a virtual environment
 python -m venv venv
