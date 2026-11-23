@@ -5,6 +5,14 @@ from flasgger import Swagger
 app = Flask(__name__)
 swagger = Swagger(app)
 
+# --- helpers ---
+
+def validation_error(message):
+    return jsonify({
+        "error": "validation_error",
+        "message": message
+    }), 400
+
 def validate_movie_data(movie_data):
     if not isinstance(movie_data, dict):
         return None, "Request body must be a JSON object."
@@ -34,13 +42,13 @@ def validate_movie_data(movie_data):
 
     return movie_data, None
 
-
-def validation_error(message):
+def not_found_error(message):
     return jsonify({
-        "error": "validation_error",
+        "error": "not_found",
         "message": message
-    }), 400
+    }), 404
 
+# --- routes ---
 
 @app.route("/")
 def home():
@@ -144,3 +152,46 @@ def delete_movie(movie_id):
         "error": "Not found",
         "message": f"No movie with id {movie_id} was found."
     }), 404
+
+@app.route("/movies/<int:movie_id>/reviews", methods=["POST"])
+def add_review(movie_id):
+    movie = None
+    for m in movies:
+        if m["id"] == movie_id:
+            movie = m
+            break
+
+    if movie is None:
+        return jsonify({
+            "error": "not_found",
+            "message": f"No movie with id {movie_id} was found."
+        }), 404
+
+    review_data = request.get_json(silent=True)
+    if not isinstance(review_data, dict):
+        return validation_error("Request body must be a JSON object.")
+
+    required_fields = ["reviewer", "rating", "comment"]
+    for field in required_fields:
+        if field not in review_data:
+            return validation_error(f"Field '{field}' is required.")
+
+    if not isinstance(review_data["reviewer"], str):
+        return validation_error("Field 'reviewer' must be a string.")
+
+    if not isinstance(review_data["rating"], int) or isinstance(review_data["rating"], bool):
+        return validation_error("Field 'rating' must be an integer.")
+
+    if not isinstance(review_data["comment"], str):
+        return validation_error("Field 'comment' must be a string.")
+
+    new_review = {
+        **review_data,
+        "id": max((review.get("id", 0) for review in movie.get("reviews", [])), default=0) + 1
+    }
+
+    if "reviews" not in movie:
+        movie["reviews"] = []
+    movie["reviews"].append(new_review)
+
+    return jsonify(new_review), 201
